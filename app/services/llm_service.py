@@ -30,7 +30,7 @@ def _clean_and_parse_json(raw: str) -> dict:
     try:
         return json.loads(cleaned)
     except json.JSONDecodeError as exc:
-        logger.error("JSON parse error: %s | raw: %s", exc, cleaned[:300])
+        logger.error("JSON parse error: %s | raw (first 500 chars): %s", exc, cleaned[:500])
         raise HTTPException(status_code=502, detail="فشل تحليل استجابة الذكاء الاصطناعي")
 
 
@@ -39,9 +39,16 @@ async def _call_gemini(prompt: str, temperature: float) -> str:
     model = _build_model(temperature)
     try:
         response = await model.generate_content_async(prompt)
+        # Check if the response was blocked by safety filters
+        if not response.candidates:
+            logger.warning("Gemini response blocked or empty. Candidates: %s", response.candidates)
+            raise HTTPException(status_code=502, detail="تم حظر الاستجابة بواسطة فلاتر الأمان")
+            
         return response.text.strip()
     except Exception as exc:
-        logger.error("Gemini API error: %s", exc)
+        logger.error("Gemini API error (Type: %s): %s", type(exc).__name__, exc)
+        if "rate limit" in str(exc).lower():
+            raise HTTPException(status_code=429, detail="لقد تجاوزت حد الطلبات، حاول لاحقاً")
         raise HTTPException(status_code=502, detail="حدث خطأ أثناء الاتصال بالذكاء الاصطناعي")
 
 
