@@ -55,10 +55,10 @@ async def _call_gemini(prompt: str, temperature: float) -> str:
 # ─── Essay Evaluation ─────────────────────────────────────────────────────────
 
 async def evaluate_essay(text: str, perfect_answer: str, max_points: int) -> dict:
-    prompt = ESSAY_PROMPT.format(
-        text=text,
-        perfect_answer=perfect_answer,
-        max_points=max_points,
+    prompt = (
+        ESSAY_PROMPT.replace("{text}", text)
+        .replace("{perfect_answer}", perfect_answer)
+        .replace("{max_points}", str(max_points))
     )
     logger.info("Calling Gemini for essay evaluation")
     raw = await _call_gemini(prompt, settings.ESSAY_TEMPERATURE)
@@ -76,7 +76,7 @@ async def evaluate_essay(text: str, perfect_answer: str, max_points: int) -> dic
 # ─── Translation ──────────────────────────────────────────────────────────────
 
 async def translate_text(english_text: str) -> str:
-    prompt = TRANSLATION_PROMPT.format(text=english_text)
+    prompt = TRANSLATION_PROMPT.replace("{text}", english_text)
     logger.info("Calling Gemini for translation")
     return await _call_gemini(prompt, settings.TRANSLATION_TEMPERATURE)
 
@@ -84,11 +84,11 @@ async def translate_text(english_text: str) -> str:
 # ─── Document Generation ──────────────────────────────────────────────────────
 
 async def generate_document(document_type: str, tone: str, recipient: str, main_points: str) -> str:
-    prompt = DOCUMENT_PROMPT.format(
-        document_type=document_type,
-        tone=tone,
-        recipient=recipient,
-        main_points=main_points,
+    prompt = (
+        DOCUMENT_PROMPT.replace("{document_type}", document_type)
+        .replace("{tone}", tone)
+        .replace("{recipient}", recipient)
+        .replace("{main_points}", main_points)
     )
     logger.info("Calling Gemini for document generation")
     return await _call_gemini(prompt, settings.DOCUMENT_TEMPERATURE)
