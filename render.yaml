@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: mubeen-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false # Set this in Render dashboard
+      - key: FIREBASE_CREDENTIALS_JSON
+        sync: false # Set this in Render dashboard (full JSON string)
+      - key: PORT
+        value: 8000
