@@ -10,4 +10,4 @@ services:
       - key: FIREBASE_CREDENTIALS_JSON
         sync: false # Set this in Render dashboard (full JSON string)
       - key: PORT
-        value: 8000
+        value: "8000"
