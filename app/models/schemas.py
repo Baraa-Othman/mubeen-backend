@@ -21,7 +21,7 @@ class EssayResponse(BaseModel):
 # ─── Translation ──────────────────────────────────────────────────────────────
 
 class TranslationRequest(BaseModel):
-    english_text: str = Field(..., max_length=4000, description="text to translate")
+    english_text: str = Field(..., max_length=6000, description="text to translate")
 
 
 class TranslationResponse(BaseModel):
