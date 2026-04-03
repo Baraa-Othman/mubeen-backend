@@ -31,6 +31,11 @@ app.add_middleware(
 app.include_router(router, prefix="/api/v1")
 
 
+@app.get("/", tags=["Root"])
+async def root():
+    return {"message": "Welcome to Mubeen Backend. The API is running."}
+
+
 @app.get("/health", tags=["Health"])
 async def health():
     return {"status": "ok"}
